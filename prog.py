@@ -5,7 +5,7 @@ T_pays = []
 abscisse = []
 ordonnee = [-1]
 
-directory = '/media/nk-wilfried/NKW/UY1/L3/INF351/TP-1_INF351_Data/TP_INF351_Data'
+directory = './TP_INF351_Data/'
 
 #Connexion a la bd 
 connexion = mysql.connector.connect(user="root", password="", host="localhost", database="TPINF351")
