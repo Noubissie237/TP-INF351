@@ -200,22 +200,25 @@ finally:
                 connexion.commit()
 
 
-                recup_id_article = "SELECT idArticle FROM Article WHERE titre_article=%s"
-                recup_id_auteur = "SELECT idAuteur FROM Auteur WHERE nom_encode=%s"
+                recup_id_article = "SELECT idArticle FROM Article WHERE titre_article LIKE %s"
+                recup_id_auteur = "SELECT idAuteur FROM Auteur WHERE nom_encode LIKE %s"
                 insert_query_auteur_article = "INSERT INTO AuteurArticle (idAuteur, idArticle) VALUES (%s, %s)"
 
                 data4 = (titre,)
                 data5 = (nom[i],)
 
-                cursor.execute(recup_id_article, data4)
-                idAr = cursor.fetchone()
-                cursor.execute(recup_id_auteur, data5)
-                idAu = cursor.fetchone()
-                data6 = (idAu[0], idAr[0])
-                cursor.execute(insert_query_auteur_article, data6)
+                try:
+                    cursor.execute(recup_id_article, '%'+data4+'%')
+                    idAr = cursor.fetchone()
+                    cursor.execute(recup_id_auteur, '%'+data5+'%')
+                    idAu = cursor.fetchone()
+                    data6 = (idAu[0], idAr[0])
+                    cursor.execute(insert_query_auteur_article, data6)
 
-                #validation des modifications
-                connexion.commit()
+                    #validation des modifications
+                    connexion.commit()
+                except:
+                    continue
 
 #Fermeture du cursor et de la connexion à la bd
     cursor.close()
