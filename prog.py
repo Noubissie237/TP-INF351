@@ -182,18 +182,20 @@ finally:
             print("PAYS : ",pays)
 
             insert_query_titre = "INSERT INTO Article (titre_article, annee) VALUES (%s, %s)"
+            data1 = (titre, year)
+            cursor.execute(insert_query_titre, data1)
+            connexion.commit()
+            
             for i in range(len(nom)):
                 insert_query_noms = "INSERT INTO Auteur (nom_encode) VALUES (%s)"
                 insert_query_ets_ville_pays = "INSERT INTO Affiliation (etablissement, ville, pays) VALUES (%s, %s, %s)"
                 insert_query_auteur_article = "INSERT INTO AuteurArticle VALUES(SELECT id)"
 
                 #donnees à inserer
-                data1 = (titre, year)
                 data2 = (nom[i],)
                 data3 = (etablissement[i], ville[i], pays[i])
 
                 #Execution des requetes
-                cursor.execute(insert_query_titre, data1)
                 cursor.execute(insert_query_noms, data2)
                 cursor.execute(insert_query_ets_ville_pays, data3)
 
