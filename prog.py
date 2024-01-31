@@ -189,7 +189,6 @@ finally:
             for i in range(len(nom)):
                 insert_query_noms = "INSERT INTO Auteur (nom_encode) VALUES (%s)"
                 insert_query_ets_ville_pays = "INSERT INTO Affiliation (etablissement, ville, pays) VALUES (%s, %s, %s)"
-                insert_query_auteur_article = "INSERT INTO AuteurArticle VALUES(SELECT id)"
 
                 #donnees à inserer
                 data2 = (nom[i],)
@@ -198,6 +197,22 @@ finally:
                 #Execution des requetes
                 cursor.execute(insert_query_noms, data2)
                 cursor.execute(insert_query_ets_ville_pays, data3)
+                connexion.commit()
+
+
+                recup_id_article = "SELECT idArticle FROM Article WHERE titre_article=%s"
+                recup_id_auteur = "SELECT idAuteur FROM Auteur WHERE nom_encode=%s"
+                insert_query_auteur_article = "INSERT INTO AuteurArticle (idAuteur, idArticle) VALUES (%s, %s)"
+
+                data4 = (titre,)
+                data5 = (nom[i],)
+
+                cursor.execute(recup_id_article, data4)
+                idAr = cursor.fetchone()
+                cursor.execute(recup_id_auteur, data5)
+                idAu = cursor.fetchone()
+                data6 = (idAu[0], idAr[0])
+                cursor.execute(insert_query_auteur_article, data6)
 
                 #validation des modifications
                 connexion.commit()
