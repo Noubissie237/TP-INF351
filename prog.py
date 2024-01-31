@@ -5,8 +5,6 @@ T_pays = []
 abscisse = []
 ordonnee = [-1]
 
-directory = './TP_INF351_Data/'
-
 #Connexion a la bd 
 connexion = mysql.connector.connect(user="root", password="", host="localhost", database="TPINF351")
 
@@ -90,7 +88,8 @@ except:
     create_article_table = """
     CREATE TABLE Article (
     idArticle INT PRIMARY KEY AUTO_INCREMENT,
-    titre_article VARCHAR(250)
+    titre_article VARCHAR(250),
+    annee INT
     )
     """
     create_auteur_table = """
@@ -103,7 +102,7 @@ except:
     create_affiliation_table = """
     CREATE TABLE Affiliation(
     idAfiliation INT PRIMARY KEY AUTO_INCREMENT,
-    etablissement VARCHAR(100),
+    etablissement VARCHAR(250),
     ville VARCHAR(100),
     pays VARCHAR(100)
     )
@@ -137,63 +136,69 @@ except:
 
 finally:
 
-    for filename in os.listdir(directory):
-        file = directory + "/" + filename
-        print("=============================================================================")
-        print("\n")
-        print(file)
-        author =[]
-        nom = []
-        etablissement = []
-        ville = []
-        pays = []
-        auteurs1=[]
-        auteurs = []
+    year = 2013
+    
+    while( year < 2017 ):
+        year += 1
+        directory = f'./Articles_{year}_textes'
+        for filename in os.listdir(directory):
+            file = directory + "/" + filename
+            print("=============================================================================")
+            print("\n")
+            print(file)
+            author =[]
+            nom = []
+            etablissement = []
+            ville = []
+            pays = []
+            auteurs1=[]
+            auteurs = []
 
-        with open(file,'r') as t:
-            titre = t.readlines()[0]
+            with open(file,'r') as t:
+                titre = t.readlines()[0]
 
-        with open(file,'r') as g:
-            donnees = g.readlines()[1]
+            with open(file,'r') as g:
+                donnees = g.readlines()[1]
 
-        author = separation(donnees,'|')  
-        for i in range(len(author)):
-            final = separation(author[i], ',')
-            tmpNom = separation(final[0], ' ')
-            fnom = tmpNom[0][0]+'.'+tmpNom[1]
-            fnom = fnom.upper()        
-            nom.append(fnom)
-            etablissement.append(final[1])
-            ville.append(final[2])
-            pays.append(final[3])
-        pays = traitement_pays(pays)
+            author = separation(donnees,'|')  
+            for i in range(len(author)):
+                final = separation(author[i], ',')
+                tmpNom = separation(final[0], ' ')
+                fnom = tmpNom[0][0]+'.'+tmpNom[1]
+                fnom = fnom.upper()        
+                nom.append(fnom)
+                etablissement.append(final[1])
+                ville.append(final[2])
+                pays.append(final[3])
+            pays = traitement_pays(pays)
 
-        for elt in pays:
-            T_pays.append(elt)
+            for elt in pays:
+                T_pays.append(elt)
 
-        print("TITRE : ",titre)
-        print("NOMS : ",nom)
-        print("ETABLISSEMENTS : ",etablissement)
-        print("VILLES : ",ville)
-        print("PAYS : ",pays)
+            print("TITRE : ",titre)
+            print("NOMS : ",nom)
+            print("ETABLISSEMENTS : ",etablissement)
+            print("VILLES : ",ville)
+            print("PAYS : ",pays)
 
-        insert_query_titre = "INSERT INTO Article (titre_article) VALUES (%s)"
-        for i in range(len(nom)):
-            insert_query_noms = "INSERT INTO Auteur (nom_encode) VALUES (%s)"
-            insert_query_ets_ville_pays = "INSERT INTO Affiliation (etablissement, ville, pays) VALUES (%s, %s, %s)"
+            insert_query_titre = "INSERT INTO Article (titre_article, annee) VALUES (%s, %s)"
+            for i in range(len(nom)):
+                insert_query_noms = "INSERT INTO Auteur (nom_encode) VALUES (%s)"
+                insert_query_ets_ville_pays = "INSERT INTO Affiliation (etablissement, ville, pays) VALUES (%s, %s, %s)"
+                insert_query_auteur_article = "INSERT INTO AuteurArticle VALUES(SELECT id)"
 
-            #donnees à inserer
-            data1 = (titre,)
-            data2 = (nom[i],)
-            data3 = (etablissement[i], ville[i], pays[i])
+                #donnees à inserer
+                data1 = (titre, year)
+                data2 = (nom[i],)
+                data3 = (etablissement[i], ville[i], pays[i])
 
-            #Execution des requetes
-            cursor.execute(insert_query_titre, data1)
-            cursor.execute(insert_query_noms, data2)
-            cursor.execute(insert_query_ets_ville_pays, data3)
+                #Execution des requetes
+                cursor.execute(insert_query_titre, data1)
+                cursor.execute(insert_query_noms, data2)
+                cursor.execute(insert_query_ets_ville_pays, data3)
 
-            #validation des modifications
-            connexion.commit()
+                #validation des modifications
+                connexion.commit()
 
 #Fermeture du cursor et de la connexion à la bd
     cursor.close()
