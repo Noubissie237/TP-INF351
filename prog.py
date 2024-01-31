@@ -9,7 +9,7 @@ ordonnee = [-1]
 connexion = mysql.connector.connect(user="root", password="", host="localhost", database="TPINF351")
 
 # Creation du curseur
-cursor = connexion.cursor()
+cursor = connexion.cursor(buffered=True)
 
 #   Definition de la fonction de separation
 def separation (data : list ,sep : list):
@@ -123,8 +123,7 @@ except:
     idAuteur INT,
     idArticle INT,
     FOREIGN KEY (idAuteur) REFERENCES Auteur(idAuteur),
-    FOREIGN KEY (idArticle) REFERENCES Article(idArticle),
-    PRIMARY KEY(idAuteur, idArticle)
+    FOREIGN KEY (idArticle) REFERENCES Article(idArticle)
     )
     """
 
@@ -204,21 +203,20 @@ finally:
                 recup_id_auteur = "SELECT idAuteur FROM Auteur WHERE nom_encode LIKE %s"
                 insert_query_auteur_article = "INSERT INTO AuteurArticle (idAuteur, idArticle) VALUES (%s, %s)"
 
-                data4 = (titre,)
-                data5 = (nom[i],)
+                data4 = ('%'+titre+'%',)
+                data5 = ('%'+nom[i]+'%',)
 
-                try:
-                    cursor.execute(recup_id_article, '%'+data4+'%')
-                    idAr = cursor.fetchone()
-                    cursor.execute(recup_id_auteur, '%'+data5+'%')
-                    idAu = cursor.fetchone()
+                cursor.execute(recup_id_article, data4)
+                idAr = cursor.fetchone()
+                cursor.execute(recup_id_auteur, data5)
+                idAu = cursor.fetchone()
+                if idAr and idAu:
                     data6 = (idAu[0], idAr[0])
                     cursor.execute(insert_query_auteur_article, data6)
 
-                    #validation des modifications
-                    connexion.commit()
-                except:
-                    continue
+                #validation des modifications
+                connexion.commit()
+
 
 #Fermeture du cursor et de la connexion à la bd
     cursor.close()
