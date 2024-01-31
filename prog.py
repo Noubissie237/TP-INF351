@@ -113,8 +113,7 @@ except:
     idAuteur INT,
     idAfiliation INT,
     FOREIGN KEY (idAuteur) REFERENCES Auteur(idAuteur),
-    FOREIGN KEY (idAfiliation) REFERENCES Affiliation(idAfiliation),
-    PRIMARY KEY(idAuteur, idAfiliation)
+    FOREIGN KEY (idAfiliation) REFERENCES Affiliation(idAfiliation)
     )
     """
 
@@ -213,6 +212,25 @@ finally:
                 if idAr and idAu:
                     data6 = (idAu[0], idAr[0])
                     cursor.execute(insert_query_auteur_article, data6)
+
+                #validation des modifications
+                connexion.commit()
+
+        
+                recup_id_afiliation = "SELECT idAfiliation FROM Affiliation WHERE etablissement LIKE %s AND ville LIKE %s AND pays LIKE %s"
+                recup_id_auteur = "SELECT idAuteur FROM Auteur WHERE nom_encode LIKE %s"
+                insert_query_auteur_filiation = "INSERT INTO AuteurFiliation (idAuteur, idAfiliation) VALUES (%s, %s)"
+
+                data4 = ('%'+etablissement[i]+'%', '%'+ville[i]+'%', '%'+pays[i]+'%')
+                data5 = ('%'+nom[i]+'%',)
+
+                cursor.execute(recup_id_afiliation, data4)
+                idAf = cursor.fetchone()
+                cursor.execute(recup_id_auteur, data5)
+                idAu = cursor.fetchone()
+                if idAf and idAu:
+                    data6 = (idAu[0], idAf[0])
+                    cursor.execute(insert_query_auteur_filiation, data6)
 
                 #validation des modifications
                 connexion.commit()
