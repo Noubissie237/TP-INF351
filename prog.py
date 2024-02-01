@@ -49,6 +49,18 @@ def traitement_pays(liste : list):
         
         if liste[i] == ' The Netherland' or liste[i] == ' The Netherlands' or liste[i] == ' Netherlands':
             liste[i] = ' Netherland'
+
+        if liste[i] == ' C' or liste[i] == 'CA' or liste == 'CA' or liste[i] == 'CA ' or liste[i] == ' CA ':
+            liste[i] = ' CA'
+
+        if liste[i] == ' Russian Fed.':
+            liste[i] = ' Russian Fed'
+
+        if liste[i] == ' M':
+            liste[i] = ' MD'
+        
+        if liste[i] == ' T':
+            liste[i] = ' TX'
     
     return liste
 
