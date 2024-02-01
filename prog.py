@@ -240,10 +240,10 @@ finally:
     cursor.close()
     connexion.close()
 
-abscisse, ordonnee = setteur(abscisse, ordonnee, T_pays)
+# abscisse, ordonnee = setteur(abscisse, ordonnee, T_pays)
 
-plt.xlabel('PAYS')
-plt.ylabel('NOMBRE D\'ARTICLE')
-plt.title('DIAGRAMME DU NOMBRE D\'ARTICLE PUBLIÉ PAR PAYS')
-plt.bar(abscisse,ordonnee, color='#9711ff')
-plt.show()
+# plt.xlabel('PAYS')
+# plt.ylabel('NOMBRE D\'ARTICLE')
+# plt.title('DIAGRAMME DU NOMBRE D\'ARTICLE PUBLIÉ PAR PAYS')
+# plt.bar(abscisse,ordonnee, color='#9711ff')
+# plt.show()
